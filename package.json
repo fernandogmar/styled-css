@@ -1,0 +1,41 @@
+{
+  "name": "styled-css",
+  "version": "1.0.0",
+  "description": "A TypeScript library for styled CSS utilities that work with Lit",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "tsc -p tsconfig.test.json && node dist-test/index.test.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "lit",
+    "css",
+    "styled",
+    "web-components",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "lit": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.9.1",
+    "lit": "^3.3.1",
+    "typescript": "^5.9.3",
+    "zora": "^6.0.0"
+  }
+}
