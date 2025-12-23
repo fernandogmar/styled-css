@@ -1,14 +1,14 @@
-# styled-css
+# lit-styled-css
 
-![npm](https://img.shields.io/npm/v/styled-css)
-![license](https://img.shields.io/npm/l/styled-css)
-![downloads](https://img.shields.io/npm/dt/styled-css)
+![npm](https://img.shields.io/npm/v/lit-styled-css)
+![license](https://img.shields.io/npm/l/lit-styled-css)
+![downloads](https://img.shields.io/npm/dt/lit-styled-css)
 
-**styled-css** is a **lightweight, powerful library for writing maintainable CSS-in-JS for Lit**. Write real CSS, keep IDE support, and reuse styles effortlessly.
+**lit-styled-css** is a **lightweight, powerful library for writing maintainable CSS-in-JS for Lit**. Write real CSS, keep IDE support, and reuse styles effortlessly.
 
 ---
 
-## 🚀 Why styled-css?
+## 🚀 Why lit-styled-css?
 
 - **Small and simple**: Just a few helpers to organize your styles.
 - **IDE-friendly**: Keep full CSS support and autocompletion.
@@ -22,13 +22,13 @@
 
 ### Install
 ```bash
-npm install styled-css
+npm install lit-styled-css
 ```
 
 ### Define Styles
 ```ts
 import { css } from 'lit';
-import { styledClass, styledGroup, styledMixin } from 'styled-css';
+import { styledClass, styledGroup, styledMixin } from 'lit-styled-css';
 
 const mixColor = styledMixin<{ color: string }>(
   (cls, { color }) => css`

@@ -1,5 +1,5 @@
 {
-  "name": "styled-css",
+  "name": "lit-styled-css",
   "version": "1.0.0",
   "description": "A TypeScript library for styled CSS utilities that work with Lit",
   "type": "module",
