@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "tsc -p tsconfig.test.json && node dist-test/index.test.js",
+    "test": "tsc -p tsconfig.test.json && node dist-test/run-tests.js 'dist-test/*.test.js'",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.9.1",
+    "glob": "^13.0.0",
     "lit": "^3.3.1",
     "typescript": "^5.9.3",
     "zora": "^6.0.0"

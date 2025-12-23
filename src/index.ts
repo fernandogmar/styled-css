@@ -1,71 +1,61 @@
-import { css, CSSResult } from 'lit';
+import { css, CSSResult, unsafeCSS } from 'lit';
 
+// StyledClass type (unchanged)
+export type StyledClass = CSSResult[] & { className: string };
+
+// Generic template type, T represents the options object
+export type StyledTemplate<T extends Record<string, CSSResult> = {}> =
+  (cls: CSSResult, options: T) => CSSResult;
+
+export type StyledTemplateNoOptions = (cls: CSSResult) => CSSResult;
+
+// --- styledClass ---
 export function styledClass(
-  styles: TemplateStringsArray | CSSResult,
-  ...values: any[]
-): string {
-  const cssResult = typeof styles === 'object' && 'cssText' in styles
-    ? styles
-    : css(styles as TemplateStringsArray, ...values);
+  className: string,
+  templateFn: StyledTemplateNoOptions | StyledTemplateNoOptions[]
+) {
+  const fns = Array.isArray(templateFn) ? templateFn : [templateFn];
 
-  const className = `styled-${generateHash(cssResult.cssText)}`;
-  injectStyles(className, cssResult.cssText);
-
-  return className;
+  const classSelector = toClsSelector(className);
+  const style = fns.map(fn => fn(classSelector)) as StyledClass;
+  style.className = removeLeadingDot(className);
+  return style;
 }
 
-export function styledElement(
-  tagName: string,
-  styles: TemplateStringsArray | CSSResult,
-  ...values: any[]
-): string {
-  const cssResult = typeof styles === 'object' && 'cssText' in styles
-    ? styles
-    : css(styles as TemplateStringsArray, ...values);
+// --- styledGroup ---
+export type StyledGroup<TProps extends Record<string, StyledClass>> = 
+  StyledClass[] & { [K in keyof TProps]: StyledClass['className'] };
 
-  const className = `styled-${tagName}-${generateHash(cssResult.cssText)}`;
-  injectStyles(className, cssResult.cssText, tagName);
-
-  return className;
-}
-
-export function styledMixin(
-  styles: TemplateStringsArray | CSSResult,
-  ...values: any[]
-): CSSResult {
-  if (typeof styles === 'object' && 'cssText' in styles) {
+  export function styledGroup<TProps extends Record<string, StyledClass>>(
+    group: TProps
+  ) {
+    const styles = Object.values(group) as StyledGroup<TProps>;
+    for (const key in group) {
+      styles[key] = group[key].className as any;
+    }
+  
     return styles;
   }
+  
 
-  return css(styles as TemplateStringsArray, ...values);
+// --- styledMixin ---
+export function styledMixin<T extends Record<string, string | number>>(
+  templateFn: StyledTemplate<{ [K in keyof T]: CSSResult }>
+) {
+  return (options: T) => (cls: CSSResult | string) => {
+    const styledOptions = Object.fromEntries(
+      Object.entries(options).map(([key, value]) => [key, unsafeCSS(value)])
+    ) as {[K in keyof T]: CSSResult };
+
+    return templateFn(toClsSelector(cls), styledOptions);
+  };
 }
 
-function generateHash(str: string): string {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
-  }
-  return Math.abs(hash).toString(36);
+// --- helpers ---
+function toClsSelector(className: CSSResult | string) {
+  return className instanceof CSSResult ? className : unsafeCSS(`.${removeLeadingDot(className)}`);
 }
 
-function injectStyles(className: string, cssText: string, tagName?: string): void {
-  if (typeof document === 'undefined') {
-    return;
-  }
-
-  const styleId = `styled-css-${className}`;
-
-  if (document.getElementById(styleId)) {
-    return;
-  }
-
-  const styleElement = document.createElement('style');
-  styleElement.id = styleId;
-
-  const selector = tagName ? `${tagName}.${className}` : `.${className}`;
-  styleElement.textContent = `${selector} { ${cssText} }`;
-
-  document.head.appendChild(styleElement);
+function removeLeadingDot(value: string): string {
+  return value.replace(/^\./, '');
 }
